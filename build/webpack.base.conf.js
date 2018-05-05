@@ -1,8 +1,9 @@
 const path = require('path')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
-function resolve (dir) {
+function resolve(dir) {
     return path.join(__dirname, '..', dir)
-  }
+}
 
 module.exports = {
     resolve: {
@@ -23,5 +24,8 @@ module.exports = {
             test: /\.js$/,
             loader: 'babel-loader'
         }]
-    }
+    },
+    plugins: [
+        new VueLoaderPlugin()
+    ]
 }
