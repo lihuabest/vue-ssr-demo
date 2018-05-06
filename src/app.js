@@ -1,12 +1,16 @@
 const Vue = require('vue').default
-const app = require('./app.vue').default
+const App = require('./app.vue').default
+const createRouter = require('./routers/index').default
 
 function createApp() {
-    const a = new Vue({
-        render: h => h(app)
+    let router = createRouter()
+
+    const app = new Vue({
+        router,
+        render: h => h(App)
     })
 
-    return a
+    return { app, router }
 }
 
 module.exports = createApp;

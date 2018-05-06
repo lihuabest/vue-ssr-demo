@@ -1,6 +1,6 @@
 const createApp = require('./app.js')
 
-const app = createApp()
+const {app, router} = createApp()
 
 app.$mount('#app')
 

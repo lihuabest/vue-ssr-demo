@@ -23,6 +23,12 @@ module.exports = {
         }, {
             test: /\.js$/,
             loader: 'babel-loader'
+        }, {
+            test: /\.css$/,
+            loader: ['vue-style-loader', 'css-loader']
+        }, {
+            test: /\.(scss|sass)$/,
+            loader: ['node-sass', 'vue-style-loader', 'css-loader', 'sass-loader']
         }]
     },
     plugins: [

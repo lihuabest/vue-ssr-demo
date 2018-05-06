@@ -11,6 +11,9 @@ module.exports = merge(base, {
     entry: {
        client: path.resolve(__dirname, '../src/entry-client.js')
     },
+    output: {
+        publicPath: '/'
+    },
     plugins: [
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
@@ -25,6 +28,15 @@ module.exports = merge(base, {
         })
     ],
     devServer: {
-        hot: true
+        hot: true,
+        proxy: {
+            '/v2': {
+                target: 'https://api.douban.com',
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/v2': '/v2'
+                }
+            }
+        }
     }
 });

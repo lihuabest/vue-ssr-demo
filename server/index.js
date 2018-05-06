@@ -1,8 +1,9 @@
-const fs        = require('fs')
-const path      = require('path')
-const Koa       = require('koa')
-const KoaRuoter = require('koa-router')
-const serve     = require('koa-static')
+const fs                       = require('fs')
+const path                     = require('path')
+const Koa                      = require('koa')
+const KoaRuoter                = require('koa-router')
+const serve                    = require('koa-static')
+const proxy                    = require('koa-proxy')
 const { createBundleRenderer } = require('vue-server-renderer')
 
 const app = new Koa()
@@ -15,6 +16,13 @@ const renderer = createBundleRenderer(require(`${ distPath }/vue-ssr-server-bund
   template: templateHtml,
   clientManifest: require(`${ distPath }/vue-ssr-client-manifest.json`)
 })
+
+app.use(proxy(     
+    {
+        match: /^\/v2/,
+        host: 'https://api.douban.com',
+    }
+))
 
 // 静态资源
 app.use(serve(path.resolve(__dirname, distPath), { extensions: ['js', 'css']}))
@@ -37,7 +45,8 @@ function render(ctx, next) {
     ctx.set('Content-Type', 'text/html;charset=UTF-8')
 
     const context = {
-        title: 'hello vue, this is ssr'
+        title: 'hello vue, this is ssr',
+        url: '/'
     }
 
     return new Promise((resolve, reject) => {
