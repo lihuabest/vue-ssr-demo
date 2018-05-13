@@ -2,6 +2,7 @@
     <div>
         <h2>Index</h2>
         <div>
+            <p>this is a: {{a}}</p>
             <ul>
                 <li v-for="(list) of lists" :key="list.id">
                     <h4>{{ list.title }}</h4>
@@ -21,20 +22,32 @@
         name: 'IndexComponent',
         data() {
             return {
-                lists: null
+                lists: null,
+                a: 0
             }
         },
-        methods: {
-            asyncData() {
-                console.log('load data')
-                api.get('https://api.douban.com/v2/movie/in_theaters').then(data => {
-                    this.lists = data.subjects
-                    console.log(this.lists)
+        prefetch() {
+            return new Promise((resolve, reject) => {
+                // api.get('https://api.douban.com/v2/movie/in_theaters').then(data => {
+                api.get('/v2/movie/in_theaters').then(data => {
+                    let d = {
+                        lists: data.subjects,
+                        a: 123
+                    }
+                    resolve(d);
                 }).catch(err => {
-                    console.log(err)
+                    reject(err);
                 })
-                // this.lists = data.subjects
-            }
+
+                // let d = {
+                //     lists: null,
+                //     a: 123
+                // }
+                // resolve(d)
+            });
+        },
+        methods: {
+            
         }
     }
 </script>

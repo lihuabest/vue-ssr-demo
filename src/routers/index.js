@@ -11,6 +11,7 @@ export default function createRouter() {
             {
                 path: '/',
                 name: 'index',
+                // 动态组件
                 component: () => System.import('../components/index.vue')
             },
             {
@@ -18,11 +19,6 @@ export default function createRouter() {
                 name: 'detail',
                 component: () => System.import('../components/detail.vue')
             }
-            // ,
-            // {
-            //     path: '/',
-            //     redirect: '/index'
-            // }
         ]
     })
 }

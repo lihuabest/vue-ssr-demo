@@ -24,3 +24,10 @@
 ```sh
   npm run server
 ```
+
+
+参考资料
+
+https://github.com/eteplus/koa-vue-ssr-template
+https://github.com/vuejs/vue-hackernews-2.0
+https://github.com/fenivana/vue-ssr-boilerplate

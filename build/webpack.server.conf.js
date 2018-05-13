@@ -1,8 +1,7 @@
 const path               = require('path')
 const webpack            = require('webpack')
 const merge              = require('webpack-merge')
-const HtmlWebpackPlugin  = require('html-webpack-plugin')
-const AssetsPlugin       = require('assets-webpack-plugin')
+const CopyWebpackPlugin  = require('copy-webpack-plugin')
 const VueSSRServerPlugin = require('vue-server-renderer/server-plugin')
 
 const base               = require('./webpack.base.conf.js')
@@ -19,8 +18,17 @@ module.exports = merge(base, {
     plugins: [
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-            'process.env.VUE_ENV': '"server"'
+            'process.env.VUE_ENV': '"server"',
+            'TARGET': '"node"' // 定义一个总体的环境变量
         }),
-        new VueSSRServerPlugin()
+        new VueSSRServerPlugin(),
+        // 静态文件拷贝
+        new CopyWebpackPlugin([
+            {
+                from: path.resolve(__dirname, '../static'),
+                to: 'static',
+                ignore: ['.*']
+            }
+        ])
     ]
 })

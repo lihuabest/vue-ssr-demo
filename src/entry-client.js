@@ -1,4 +1,4 @@
-const createApp = require('./app.js')
+import createApp from './app.js'
 
 const {app, router} = createApp()
 

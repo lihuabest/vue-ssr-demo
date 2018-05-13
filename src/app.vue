@@ -20,6 +20,7 @@
 </template>
 
 <script>
+    import './registerGlobals'
     import HeaderComponent from './components/header.vue'
     import api from './services/client'
 
@@ -39,8 +40,8 @@
         },
         async beforeCreate() {
             console.log('app beforeCreate')
-            let data = await getData()
-            this.lists = data.subjects
+            // let data = await getData()
+            // this.lists = data.subjects
         },
         beforeMount() {
             console.log('app beforeMount')

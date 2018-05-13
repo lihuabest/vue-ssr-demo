@@ -3,7 +3,6 @@ const path                     = require('path')
 const Koa                      = require('koa')
 const KoaRuoter                = require('koa-router')
 const serve                    = require('koa-static')
-const proxy                    = require('koa-proxy')
 const { createBundleRenderer } = require('vue-server-renderer')
 
 const app = new Koa()
@@ -17,15 +16,8 @@ const renderer = createBundleRenderer(require(`${ distPath }/vue-ssr-server-bund
   clientManifest: require(`${ distPath }/vue-ssr-client-manifest.json`)
 })
 
-app.use(proxy(     
-    {
-        match: /^\/v2/,
-        host: 'https://api.douban.com',
-    }
-))
-
 // 静态资源
-app.use(serve(path.resolve(__dirname, distPath), { extensions: ['js', 'css']}))
+app.use(serve(path.resolve(__dirname, distPath), { extensions: ['js', 'css', 'png']}))
 
 router.get('*', render)
 app.use(router.routes()).use(router.allowedMethods())
@@ -34,7 +26,6 @@ const port = process.env.PORT || 8089
 app.listen(port, '0.0.0.0', () => {
     console.log(`server started at localhost:${port}`)
 })
-
 
 /**
  * 渲染函数
@@ -46,16 +37,16 @@ function render(ctx, next) {
 
     const context = {
         title: 'hello vue, this is ssr',
-        url: '/'
+        url: ctx.url
     }
 
     return new Promise((resolve, reject) => {
         renderer.renderToString(context, (err, html) => {
             if (err) {
-                console.error(err.stack)
+                console.log(err)
                 return reject(err)
             }
-
+            
             ctx.status = 200
             ctx.body = html
             resolve(html)

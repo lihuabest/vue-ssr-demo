@@ -1,9 +1,7 @@
-const createApp = require('./app.js')
-
-// module.exports = createApp
+import createApp from './app.js'
 
 // context 就是那个上下文参数
-module.exports = (context) => {
+export default (context) => {
     return new Promise((resolve, reject) => {
         let { app, router } = createApp()
         
@@ -16,12 +14,16 @@ module.exports = (context) => {
             }
             
             Promise.all(matchedComponents.map(Component => {
-                if (Component.methods && Component.methods.asyncData) {
-                    return Component.methods.asyncData({
+                if (Component.prefetch) {
+                    return Component.prefetch({
                         route: router.currentRoute
+                    }).then(data => {
+                        Component.__INITIAL_STATE__ = data
+                        return data
                     })
                 }
-            })).then(() => {
+            })).then((initialComponentsState) => {
+                context.initialComponentsState = JSON.stringify(initialComponentsState)
                 resolve(app)
             }).catch(reject)
         })

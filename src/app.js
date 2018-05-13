@@ -1,6 +1,6 @@
-const Vue = require('vue').default
-const App = require('./app.vue').default
-const createRouter = require('./routers/index').default
+import Vue from 'vue'
+import App from './app.vue'
+import createRouter from './routers/index'
 
 function createApp() {
     let router = createRouter()
@@ -13,4 +13,4 @@ function createApp() {
     return { app, router }
 }
 
-module.exports = createApp;
+export default createApp

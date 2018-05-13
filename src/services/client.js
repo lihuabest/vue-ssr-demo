@@ -1,12 +1,25 @@
 const axios = require('axios')
+const proxy = require('./proxy')
+
 let api;
 
 axios.defaults.timeout = 10000
+
+// 服务端代理 其实就是绝对地址访问
+axios.interceptors.request.use(config => {
+    const isNode = TARGET === 'node'
+    if (isNode) {
+        config.url = proxy(config.url)
+    }
+
+    return config
+})
 
 axios.interceptors.response.use(res => {
     if (res.status >= 200 || res.status < 300) {
         return res
     }
+    console.log(res);
     return Promise.reject(res)
 }, error => {
     return Promise.reject({ message: 'Network error, reload please.', error: error})
