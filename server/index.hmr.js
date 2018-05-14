@@ -5,6 +5,8 @@ const KoaRuoter                = require('koa-router')
 const serve                    = require('koa-static')
 const { createBundleRenderer } = require('vue-server-renderer')
 const LRU                      = require('lru-cache')
+// const proxy                      = require('koa-proxy2')
+const proxy                      = require('koa2-simple-proxy')
 
 const app = new Koa()
 const router = new KoaRuoter()
@@ -58,10 +60,27 @@ if (isProd) {
 }
 
 app.use(async (ctx, next) => {
-    console.log('request start')
     console.log(ctx.url)
     await next()
-    console.log('request end')
+})
+
+// app.use(proxy({
+//     proxy_rules: [
+//         {
+//             proxy_location: /^\/v2/,
+//             proxy_pass: 'http://api.douban.com', // http://api.douban.com/v2/movie/in_theaters
+//             // proxy_micro_service: false,
+//             // proxy_merge_mode: false
+//         }
+//    ]
+// }))
+
+app.use(proxy(['/v2'], 'http://api.douban.com'), {
+    events: {
+        error: (error) => {
+            console.log(error)
+        }
+    }
 })
 
 // 静态资源
@@ -70,6 +89,8 @@ app.use(serve(path.resolve(__dirname, distPath), { extensions: ['js', 'css', 'pn
 router.get('*', isProd ? render : (ctx, next) => {
     readyPromise.then(() => {
         render(ctx, next)
+    }).catch(error => {
+        console.log(error)
     })
 })
 app.use(router.routes()).use(router.allowedMethods())
@@ -105,5 +126,7 @@ async function render(ctx, next) {
             ctx.body.end(html)
             resolve(html)
         })
+    }).catch(error => {
+        console.log(error)
     })
 }

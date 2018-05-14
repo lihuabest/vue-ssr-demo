@@ -38,7 +38,7 @@
                 lists: []
             }
         },
-        async beforeCreate() {
+        beforeCreate() {
             console.log('app beforeCreate')
             // let data = await getData()
             // this.lists = data.subjects

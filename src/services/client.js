@@ -19,7 +19,7 @@ axios.interceptors.response.use(res => {
     if (res.status >= 200 || res.status < 300) {
         return res
     }
-    console.log(res);
+    
     return Promise.reject(res)
 }, error => {
     return Promise.reject({ message: 'Network error, reload please.', error: error})
