@@ -1,23 +1,19 @@
 const httpProxy = require('http-proxy')
 
-function proxyMiddleware(prefix, target, options) {
-    if (typeof prefix === 'string') {
-        prefix = [prefix]
-    }
-
-    if (Array.isArray(prefix) && target) {
-        return async (ctx, next) => {
-            if (prefix.filter(pre => {
-                return ctx.url.indexOf(pre) === 0
-            }).length) {
-                const proxy = httpProxy.createProxyServer({ changeOrigin: true, preserveHeaderKeyCase: true });
-                proxy.web(ctx.req, ctx.res, {
-                    target
-                })
-                ctx.response = false
-            } else {
-                next()
-            }
+function proxyMiddleware(options) {
+    return async (ctx, next) => {
+        let api = Object.keys(options).filter(key => ctx.url.indexOf(key) === 0)
+        if (ctx.url !== '/' && api && api.length) {
+            let conf = options[api[0]]
+            const proxy = httpProxy.createProxyServer({ changeOrigin: conf.changeOrigin || false, preserveHeaderKeyCase: true });
+            console.log(`Origin path: ${ctx.url}`)
+            console.log(`Proxy path: ${conf.target + ctx.url}`)
+            proxy.web(ctx.req, ctx.res, {
+                target: conf.target
+            })
+            ctx.response = false
+        } else {
+            await next()
         }
     }
 }

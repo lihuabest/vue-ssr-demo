@@ -5,8 +5,7 @@ const KoaRuoter                = require('koa-router')
 const serve                    = require('koa-static')
 const { createBundleRenderer } = require('vue-server-renderer')
 const LRU                      = require('lru-cache')
-// const proxy                      = require('koa-proxy2')
-const proxy                      = require('koa2-simple-proxy')
+const proxy                    = require('./proxy')
 
 const app = new Koa()
 const router = new KoaRuoter()
@@ -61,27 +60,17 @@ if (isProd) {
 
 app.use(async (ctx, next) => {
     console.log(ctx.url)
+
     await next()
 })
 
-// app.use(proxy({
-//     proxy_rules: [
-//         {
-//             proxy_location: /^\/v2/,
-//             proxy_pass: 'http://api.douban.com', // http://api.douban.com/v2/movie/in_theaters
-//             // proxy_micro_service: false,
-//             // proxy_merge_mode: false
-//         }
-//    ]
-// }))
-
-app.use(proxy(['/v2'], 'http://api.douban.com'), {
-    events: {
-        error: (error) => {
-            console.log(error)
-        }
+// 代理设置
+app.use(proxy({
+    '/v2': {
+        target: 'https://api.douban.com',
+        changeOrigin: true
     }
-})
+}))
 
 // 静态资源
 app.use(serve(path.resolve(__dirname, distPath), { extensions: ['js', 'css', 'png']}))
@@ -121,7 +110,7 @@ async function render(ctx, next) {
             if (err) {
                 return reject(err)
             }
-            
+
             ctx.status = 200
             ctx.body.end(html)
             resolve(html)

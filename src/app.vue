@@ -22,11 +22,6 @@
 <script>
     import './registerGlobals'
     import HeaderComponent from './components/header.vue'
-    import api from './services/client'
-
-    async function getData() {
-        return await api.get('/v2/movie/in_theaters')
-    }
 
     export default {
         name: 'App',

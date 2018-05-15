@@ -16,7 +16,7 @@
 </template>
 
 <script>
-    import api from '../services/client'
+    import api from '../services/index'
 
     export default {
         name: 'IndexComponent',
@@ -28,11 +28,10 @@
         },
         prefetch() {
             return new Promise((resolve, reject) => {
-                // api.get('https://api.douban.com/v2/movie/in_theaters').then(data => {
                 api.get('/v2/movie/in_theaters').then(data => {
                     let d = {
                         lists: data.subjects,
-                        a: 123222
+                        a: 123
                     }
                     resolve(d);
                 }).catch(err => {
@@ -47,7 +46,7 @@
             });
         },
         methods: {
-            
+
         }
     }
 </script>

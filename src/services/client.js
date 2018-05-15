@@ -1,25 +1,21 @@
+/**
+ * client服务
+ */
 const axios = require('axios')
-const proxy = require('./proxy')
 
 let api;
 
-axios.defaults.timeout = 10000
-
-// 服务端代理 其实就是绝对地址访问
-axios.interceptors.request.use(config => {
-    const isNode = TARGET === 'node'
-    if (isNode) {
-        config.url = proxy(config.url)
-    }
-
-    return config
-})
+axios.defaults.timeout = 100000
+// 开发环境下 基础请求地址就是当前运行地址，然后代理问题给koa
+if (process.env.NODE_ENV === 'development') {
+    axios.defaults.baseURL = 'http://localhost:8089'
+}
 
 axios.interceptors.response.use(res => {
     if (res.status >= 200 || res.status < 300) {
         return res
     }
-    
+
     return Promise.reject(res)
 }, error => {
     return Promise.reject({ message: 'Network error, reload please.', error: error})
